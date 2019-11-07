@@ -1,6 +1,7 @@
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.decomposition import NMF
 
 def moving_window_matrix(x,window_size):
     # Fork from https://qiita.com/bauer/items/48ef4a57ff77b45244b6
@@ -14,6 +15,17 @@ def hsvd(x, window, rank):
     h = u[:,:rank] @ np.diag(s[:rank]) @ vh[:rank,:]
     c = h[0,:]
     c = np.append(c, h[1:,-1])
+    return c, x-c
+
+def hnmf(x, window, rank, random_state = 0):
+    assert(np.min(x) > 0.0)
+    m = moving_window_matrix(x, window)
+    model = NMF(n_components=rank, init='random', random_state=random_state)
+    w = model.fit_transform(m)
+    h = model.components_
+    hankel = w @ h
+    c = hankel[0,:]
+    c = np.append(c, hankel[1:,-1])
     return c, x-c
 
 if __name__ == "__main__":
