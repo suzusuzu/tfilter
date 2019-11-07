@@ -12,8 +12,8 @@ def hsvd(x, window, rank):
     m = moving_window_matrix(x, window)
     u, s, vh = np.linalg.svd(m)
     h = u[:,:rank] @ np.diag(s[:rank]) @ vh[:rank,:]
-    c = h[:,0]
-    c = np.append(c, h[-1,1:])
+    c = h[0,:]
+    c = np.append(c, h[1:,-1])
     return c, x-c
 
 if __name__ == "__main__":
